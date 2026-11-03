@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getStats, logoutApi } from '../_api/stats.api'
-import { clearSession, getStoredUser, getToken } from '../../../lib/apiClient'
+import { clearSession, getStoredUser, getToken } from '../../../api/apiClient'
 
 export const useAdminStats = () => {
   const navigate = useNavigate()

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loginApi } from '../_api/login.api'
 import { loginSchema } from '../_validation/login.schema'
-import { saveSession } from '../../../lib/apiClient'
+import { saveSession } from '../../../api/apiClient'
 
 export const useLogin = () => {
   const [form, setForm] = useState({ email: '', password: '' })

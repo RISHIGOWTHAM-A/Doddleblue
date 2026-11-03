@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signupApi } from '../_api/signup.api'
 import { signupSchema } from '../_validation/signup.schema'
-import { saveSession } from '../../../lib/apiClient'
+import { saveSession } from '../../../api/apiClient'
 
 const initial = {
   name: '',

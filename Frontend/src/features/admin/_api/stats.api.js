@@ -1,4 +1,4 @@
-import { apiFetch } from '../../../lib/apiClient'
+import { apiFetch } from '../../../api/apiClient'
 
 export const getStats = () => apiFetch('/admin/stats')
 

@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-import brandLogo from '../../assets/brand-logo.png'
 import { useAdminStats } from './_hooks/useAdminStats'
 
 const StatCard = ({ label, value, sub }) => (
@@ -13,35 +11,11 @@ const StatCard = ({ label, value, sub }) => (
 )
 
 const AdminPage = () => {
-  const { user, stats, error, logout } = useAdminStats()
+  const { user, stats, error } = useAdminStats()
 
   return (
-    <div className="min-h-svh bg-cream">
-      {/* Top bar */}
-      <header className="border-b border-gold/30 bg-cream/95">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
-          <div className="flex items-center gap-3">
-            <img src={brandLogo} alt="Royal Sweets" className="w-10 h-10 rounded-xl shadow-sm shadow-maroon/20" />
-            <span className="leading-tight">
-              <span className="block font-serif text-lg font-semibold tracking-wide text-maroon">ROYAL SWEETS</span>
-              <span className="block text-[9px] uppercase tracking-[0.35em] text-gold">Admin Panel</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link to="/" className="hidden text-sm font-medium text-ink/60 transition hover:text-maroon sm:block">
-              View store
-            </Link>
-            <button
-              onClick={logout}
-              className="rounded-full bg-maroon px-5 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-cream transition hover:bg-maroon-dark"
-            >
-              Log out
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+    <div>
+      <main className="mx-auto max-w-6xl">
         <h1 className="font-serif text-3xl text-maroon">
           Welcome back, {user?.name?.split(' ')[0] || 'Admin'}
         </h1>
