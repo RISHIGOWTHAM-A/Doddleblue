@@ -1,0 +1,497 @@
+{
+  "info": {
+    "name": "Royal Sweets API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api" },
+    { "key": "customerToken", "value": "" },
+    { "key": "adminToken", "value": "" },
+    { "key": "categoryId", "value": "" },
+    { "key": "productId", "value": "" },
+    { "key": "orderId", "value": "" },
+    { "key": "userId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "0. Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": { "method": "GET", "url": "{{baseUrl}}/health" }
+        }
+      ]
+    },
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Register customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json().data || {};",
+                  "if (d.token) pm.collectionVariables.set('customerToken', d.token);",
+                  "if (d.user && d.user.id) pm.collectionVariables.set('userId', d.user.id);",
+                  "console.log('customerToken saved');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Customer\",\n  \"email\": \"customer1@test.com\",\n  \"password\": \"Test1234\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Login (customer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json().data || {};",
+                  "if (d.token) pm.collectionVariables.set('customerToken', d.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer1@test.com\",\n  \"password\": \"Test1234\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Admin login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json().data || {};",
+                  "if (d.token) pm.collectionVariables.set('adminToken', d.token);",
+                  "console.log('adminToken saved');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/admin/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@royalsweets.com\",\n  \"password\": \"wexQ8h82uyoq\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Get my profile",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] }
+          }
+        },
+        {
+          "name": "Update profile",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/auth/me",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Customer\",\n  \"phone\": \"9876543210\",\n  \"address\": {\n    \"street\": \"12 MG Road\",\n    \"city\": \"Bengaluru\",\n    \"state\": \"Karnataka\",\n    \"postalCode\": \"560001\",\n    \"country\": \"India\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Change password",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/auth/change-password",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Test1234\",\n  \"newPassword\": \"Test12345\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": { "method": "POST", "url": "{{baseUrl}}/auth/logout" }
+        }
+      ]
+    },
+    {
+      "name": "2. Categories",
+      "item": [
+        {
+          "name": "Create category (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json().data || {};",
+                  "if (d._id) pm.collectionVariables.set('categoryId', d._id);",
+                  "console.log('categoryId saved');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/categories",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ladoo\",\n  \"description\": \"Traditional ladoos\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "List categories",
+          "request": { "method": "GET", "url": "{{baseUrl}}/categories" }
+        },
+        {
+          "name": "Get category by id",
+          "request": { "method": "GET", "url": "{{baseUrl}}/categories/{{categoryId}}" }
+        },
+        {
+          "name": "Update category (admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/categories/{{categoryId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"All types of ladoos\",\n  \"isActive\": true\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete category (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/categories/{{categoryId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Products",
+      "item": [
+        {
+          "name": "Create product (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json().data || {};",
+                  "if (d._id) pm.collectionVariables.set('productId', d._id);",
+                  "console.log('productId saved');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/products",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Motichoor Ladoo\",\n  \"description\": \"Made with pure ghee\",\n  \"price\": 450,\n  \"discountPrice\": 399,\n  \"category\": \"{{categoryId}}\",\n  \"stock\": 100,\n  \"isFeatured\": true,\n  \"ingredients\": [\"besan\", \"ghee\", \"sugar\"],\n  \"allergens\": [\"dairy\"],\n  \"weightOptions\": [\n    { \"label\": \"500g\", \"price\": 230, \"stock\": 30 },\n    { \"label\": \"1kg\", \"price\": 450, \"stock\": 20 }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "List products",
+          "request": { "method": "GET", "url": "{{baseUrl}}/products" }
+        },
+        {
+          "name": "Search + filter + sort",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/products?search=ladoo&minPrice=100&maxPrice=500&sort=price_asc&page=1&limit=10"
+          }
+        },
+        {
+          "name": "Featured products",
+          "request": { "method": "GET", "url": "{{baseUrl}}/products/featured" }
+        },
+        {
+          "name": "Product by slug",
+          "request": { "method": "GET", "url": "{{baseUrl}}/products/slug/motichoor-ladoo" }
+        },
+        {
+          "name": "Product by id",
+          "request": { "method": "GET", "url": "{{baseUrl}}/products/{{productId}}" }
+        },
+        {
+          "name": "Update product (admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/products/{{productId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 475,\n  \"stock\": 80\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete product (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/products/{{productId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Cart (customer)",
+      "item": [
+        {
+          "name": "Add item to cart",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/cart/items",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"weightOption\": \"500g\",\n  \"quantity\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Get cart",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/cart",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] }
+          }
+        },
+        {
+          "name": "Update item quantity",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/cart/items",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"weightOption\": \"500g\",\n  \"quantity\": 3\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Remove item",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/cart/items/{{productId}}?weightOption=500g",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] }
+          }
+        },
+        {
+          "name": "Clear cart",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/cart",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Orders",
+      "item": [
+        {
+          "name": "Place COD order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json().data || {};",
+                  "if (d._id) pm.collectionVariables.set('orderId', d._id);",
+                  "console.log('orderId saved');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/orders",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shippingAddress\": {\n    \"fullName\": \"Test Customer\",\n    \"phone\": \"9876543210\",\n    \"street\": \"12 MG Road\",\n    \"city\": \"Bengaluru\",\n    \"state\": \"Karnataka\",\n    \"postalCode\": \"560001\",\n    \"country\": \"India\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "My orders",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/orders/my-orders",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] }
+          }
+        },
+        {
+          "name": "Order details",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/orders/{{orderId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] }
+          }
+        },
+        {
+          "name": "Track order",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/orders/{{orderId}}/track",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] }
+          }
+        },
+        {
+          "name": "Admin: all orders",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/orders",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        },
+        {
+          "name": "Admin: update order status",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/admin/orders/{{orderId}}/status",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"delivered\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Reviews",
+      "item": [
+        {
+          "name": "Submit review (after delivery)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/products/{{productId}}/reviews",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Best ladoo ever!\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "List product reviews",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/products/{{productId}}/reviews"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Admin",
+      "item": [
+        {
+          "name": "List all users",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/users",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        },
+        {
+          "name": "Get user by id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/users/{{userId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        },
+        {
+          "name": "Delete user (cascades cart+reviews)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/admin/users/{{userId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        },
+        {
+          "name": "Dashboard stats",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/stats",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Uploads (Cloudinary)",
+      "item": [
+        {
+          "name": "Get upload signature",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/uploads/signature",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"folder\": \"royal-sweets/products\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete image (must exist in DB)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/uploads",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publicId\": \"royal-sweets/products/abc123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
