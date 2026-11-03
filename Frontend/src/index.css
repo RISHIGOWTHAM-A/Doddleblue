@@ -1,4 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
+
+@theme {
+  --color-cream: #fff9ee;
+  --color-maroon: #8a1c14;
+  --color-gold: #e5a93b;
+  --color-ochre: #c59b27;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', 'Segoe UI', sans-serif;
+}
 
 @theme {
   --color-cream: #f7f0e2;
@@ -13,13 +23,22 @@
 }
 
 body {
+  min-width: 320px;
+  min-height: 100vh;
   margin: 0;
-  background: var(--color-cream);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
+  background: #fff9ee;
 }
 
-#root {
-  min-height: 100svh;
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  color: #fff9ee;
+  background: #8a1c14;
 }
