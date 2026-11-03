@@ -45,7 +45,7 @@ export const useSignup = () => {
       const { name, email, password, profileImage } = parsed.data
       const res = await signupApi({ name, email, password, profileImage })
       saveSession(res.data.token, res.data.user)
-      navigate('/')
+      navigate('/home')
     } catch (err) {
       setError(err.message)
     } finally {

@@ -36,7 +36,7 @@ export const useLogin = () => {
     try {
       const res = await loginApi(parsed.data)
       saveSession(res.data.token, res.data.user)
-      navigate('/')
+      navigate(res.data.user.role === 'admin' ? '/admin' : '/home')
     } catch (err) {
       setError(err.message)
     } finally {
