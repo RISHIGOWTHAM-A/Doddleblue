@@ -30,6 +30,7 @@ const register = asyncHandler(async (req, res) => {
     email,
     password: req.body.password,
     role: 'customer',
+    profileImage: req.body.profileImage || '',
   });
 
   sendAuthResponse(res, user, 201, 'Registration successful');
@@ -77,7 +78,7 @@ const getProfile = asyncHandler(async (req, res) => {
 
 const updateProfile = asyncHandler(async (req, res) => {
   const user = req.user;
-  const fields = ['name', 'phone', 'address'];
+  const fields = ['name', 'phone', 'address', 'profileImage'];
   for (const field of fields) {
     if (req.body[field] !== undefined) user[field] = req.body[field];
   }

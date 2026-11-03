@@ -11,6 +11,7 @@ const sanitizeUser = (user) => ({
   role: user.role,
   phone: user.phone,
   address: user.address,
+  profileImage: user.profileImage,
 });
 
 const sendAuthResponse = (res, user, statusCode, message) => {
