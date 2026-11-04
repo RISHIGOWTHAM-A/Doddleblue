@@ -22,6 +22,7 @@ const CartView = () => {
   const { cart, loading, error, busy, count, setQty, remove, clear, reload } = useCart()
   const navigate = useNavigate()
   const [ordering, setOrdering] = useState(false)
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
   const items = cart?.items || []
 
   const [form, setForm] = useState({ fullName: '', phone: '', street: '', city: '', state: '', postalCode: '', country: 'India' })
@@ -97,15 +98,24 @@ const CartView = () => {
                 <div className="flex justify-between"><dt className="text-ink/60">Delivery</dt><dd className="font-semibold text-green-700">Free</dd></div>
                 <div className="flex justify-between border-t border-gold/30 pt-2.5"><dt className="font-semibold text-maroon">Total</dt><dd className="font-serif text-lg font-bold text-maroon">{inr(cart.total)}</dd></div>
               </dl>
-              <div className="mt-5 space-y-2">
-                {[['fullName', 'Full name'], ['phone', 'Phone'], ['street', 'Street address'], ['city', 'City'], ['state', 'State'], ['postalCode', 'PIN code']].map(([k, ph]) => (
-                  <input key={k} value={form[k]} onChange={set(k)} placeholder={ph} required
-                    className="w-full rounded-lg border border-gold/40 bg-cream px-3 py-2.5 text-sm text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none" />
-                ))}
-              </div>
-              <button onClick={checkout} disabled={ordering || required} className="mt-4 w-full rounded-lg bg-maroon py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-cream transition hover:bg-maroon-dark disabled:opacity-50">
-                {ordering ? 'Placing…' : 'Place COD order'}
-              </button>
+              {!checkoutOpen ? (
+                <button onClick={() => setCheckoutOpen(true)} className="mt-5 w-full rounded-lg bg-maroon py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-cream transition hover:bg-maroon-dark">
+                  Proceed to checkout
+                </button>
+              ) : (
+                <>
+                  <p className="mt-5 text-xs font-bold uppercase tracking-widest text-gold">Shipping address</p>
+                  <div className="mt-3 space-y-2">
+                    {[['fullName', 'Full name'], ['phone', 'Phone'], ['street', 'Street address'], ['city', 'City'], ['state', 'State'], ['postalCode', 'PIN code']].map(([k, ph]) => (
+                      <input key={k} value={form[k]} onChange={set(k)} placeholder={ph} required
+                        className="w-full rounded-lg border border-gold/40 bg-cream px-3 py-2.5 text-sm text-ink placeholder:text-ink/50 focus:border-gold focus:outline-none" />
+                    ))}
+                  </div>
+                  <button onClick={checkout} disabled={ordering || required} className="mt-4 w-full rounded-lg bg-maroon py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-cream transition hover:bg-maroon-dark disabled:opacity-50">
+                    {ordering ? 'Placing…' : 'Place COD order'}
+                  </button>
+                </>
+              )}
               <p className="mt-3 text-center text-xs text-ink/50">Cash on delivery · Pay when your sweets arrive</p>
             </aside>
           </div>

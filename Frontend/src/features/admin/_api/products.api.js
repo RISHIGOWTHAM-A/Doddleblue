@@ -9,7 +9,7 @@ export const adminUpdateProduct = (id, body) =>
 export const adminDeleteProduct = (id) => apiFetch(`/products/${id}`, { method: 'DELETE' })
 
 export const getUploadSignature = (folder = 'royal-sweets/products') =>
-  apiFetch('/uploads/signature', { method: 'POST', body: JSON.stringify({ folder }) }).then((r) => r.data)
+  apiFetch('/uploads/signature', { method: 'POST', body: { folder } }).then((r) => r.data)
 
 export const uploadToCloudinary = async (file) => {
   const sig = await getUploadSignature()
@@ -26,4 +26,4 @@ export const uploadToCloudinary = async (file) => {
 }
 
 export const deleteCloudinaryImage = (publicId) =>
-  apiFetch('/uploads', { method: 'DELETE', body: JSON.stringify({ publicId }) })
+  apiFetch('/uploads', { method: 'DELETE', body: { publicId } })

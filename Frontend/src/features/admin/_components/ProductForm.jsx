@@ -1,9 +1,8 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Upload, X } from 'lucide-react'
-import { deleteCloudinaryImage, uploadToCloudinary } from '../_api/products.api'
+import { X } from 'lucide-react'
 
 const schema = z.object({
   name: z.string().min(2, 'Required'),
@@ -23,8 +22,15 @@ const inp = 'w-full rounded-lg border border-gold/40 bg-warm-white px-4 py-2.5 t
 const lbl = 'mb-1.5 block text-xs font-semibold uppercase tracking-wider text-maroon/70'
 
 const ProductForm = ({ categories, onSave, onCancel, initial }) => {
-  const fileRef = useRef()
+  
   const [images, setImages] = useState(initial?.images || [])
+  const [imgUrl, setImgUrl] = useState('')
+  const addUrl = () => {
+    const url = imgUrl.trim()
+    if (!url || images.some((im) => im.url === url)) return
+    setImages((x) => [...x, { url, publicId: `external/${x.length}` }])
+    setImgUrl('')
+  }
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -37,19 +43,6 @@ const ProductForm = ({ categories, onSave, onCancel, initial }) => {
       allergens: (initial.allergens || []).join(', '),
     } : { isActive: true, isFeatured: false, stock: 0 },
   })
-
-  const pick = async (e) => {
-    for (const f of e.target.files) {
-      setBusy(true)
-      try { const im = await uploadToCloudinary(f); setImages((x) => [...x, im]) } catch (e2) { setErr(e2.message) }
-      setBusy(false)
-    }
-    e.target.value = ''
-  }
-  const removeImg = async (im) => {
-    try { if (im.publicId) await deleteCloudinaryImage(im.publicId) } catch { /* still remove locally */ }
-    setImages((x) => x.filter((y) => y !== im))
-  }
 
   const submit = (d) => onSave({
     ...d,
@@ -88,18 +81,19 @@ const ProductForm = ({ categories, onSave, onCancel, initial }) => {
         <label className="flex items-center gap-2"><input type="checkbox" {...register('isFeatured')} className="accent-maroon" /> Featured</label>
       </div>
       <div>
-        <span className={lbl}>Images (Cloudinary)</span>
-        <div className="flex flex-wrap gap-3">
+        <span className={lbl}>Images (URL)</span>
+        <div className="flex gap-2">
+          <input className={inp} placeholder="https://… image url" value={imgUrl} onChange={(e) => setImgUrl(e.target.value)} />
+          <button type="button" onClick={addUrl} className="shrink-0 rounded-lg bg-maroon px-4 text-sm font-semibold text-cream hover:bg-maroon-dark">Add</button>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-3">
           {images.map((im, i) => (
             <span key={i} className="relative size-20 overflow-hidden rounded-lg border border-gold/40">
               <img src={im.url} alt="" className="size-full object-cover" />
-              <button type="button" onClick={() => removeImg(im)} className="absolute right-0.5 top-0.5 rounded bg-red-600 p-0.5 text-white"><X className="size-3" /></button>
+              <button type="button" onClick={() => setImages((x) => x.filter((y) => y !== im))} className="absolute right-0.5 top-0.5 rounded bg-red-600 p-0.5 text-white"><X className="size-3" /></button>
             </span>
           ))}
-          <button type="button" onClick={() => fileRef.current.click()} disabled={busy} className="flex size-20 items-center justify-center rounded-lg border-2 border-dashed border-gold/50 text-maroon hover:bg-gold/10"><Upload className="size-5" /></button>
-          <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={pick} />
         </div>
-        {busy && <p className="mt-2 text-xs text-ink/50">Uploading…</p>}
       </div>
       {err && <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">{err}</p>}
       <div className="flex gap-3">

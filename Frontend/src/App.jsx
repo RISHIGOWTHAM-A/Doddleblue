@@ -14,6 +14,7 @@ import ContactPage from './features/contact/page'
 import ProductDetailsPage from './features/products/details-page'
 import CartPage from './features/cart/page'
 import OrdersPage from './features/orders/page'
+import ProfilePage from './features/profile/page'
 import AdminProductsPage from './features/admin/products-page'
 import AdminLayout from './features/admin/_components/AdminLayout'
 import AdminOrdersPage from './features/admin/orders-page'
@@ -34,6 +35,7 @@ const App = () => (
       <Route path="/product/:id" element={<RequireCustomer><ProductDetailsPage /></RequireCustomer>} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/orders" element={<OrdersPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminPage />} />
         <Route path="products" element={<AdminProductsPage />} />
