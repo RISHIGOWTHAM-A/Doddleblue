@@ -1,0 +1,13 @@
+[build]
+  # The React (Vite) app lives in the Frontend folder
+  base = "Frontend"
+  # Install dependencies first so the vite binary is available
+  command = "npm install && npm run build"
+  # Relative to the base directory
+  publish = "dist"
+
+# Single-page app fallback so React Router routes work on refresh/deep links
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
