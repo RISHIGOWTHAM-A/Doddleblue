@@ -60,8 +60,8 @@ const CartView = () => {
                 return (
                   <div key={key} className="mb-4 flex gap-4 rounded-2xl border border-gold/30 bg-warm-white p-4">
                     <Link to={`/product/${p.slug || p._id}`} className="shrink-0">
-                      {p.images?.[0]?.url
-                        ? <img src={p.images[0].url} alt={p.name} className="size-24 rounded-xl object-cover sm:size-28" />
+                      {(it.image?.url || p.images?.[0]?.url)
+                        ? <img src={it.image?.url || p.images[0].url} alt={p.name} className="size-24 rounded-xl object-cover sm:size-28" />
                         : <div className="flex size-24 items-center justify-center rounded-xl bg-cream-dark text-ink/20 sm:size-28"><ShoppingBag className="size-8" /></div>}
                     </Link>
                     <div className="flex min-w-0 flex-1 flex-col">
