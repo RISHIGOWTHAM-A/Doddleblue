@@ -39,7 +39,7 @@ const AdminOrdersPage = () => {
                   ) : (
                     <select value={o.orderStatus} onChange={async (e) => { await updateOrderStatus(o._id, e.target.value); load() }}
                       className={`rounded-lg border px-2.5 py-1.5 text-xs font-bold capitalize outline-none transition focus:border-maroon ${STATUS_CLS[o.orderStatus] || 'border-gold/40 bg-cream'}`}>
-                      {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                      {STATUSES.filter((s) => s === 'cancelled' || STATUSES.indexOf(s) >= STATUSES.indexOf(o.orderStatus)).map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
                   )}
                 </td>

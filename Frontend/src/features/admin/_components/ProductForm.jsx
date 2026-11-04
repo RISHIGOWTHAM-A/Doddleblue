@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { X } from 'lucide-react'
+import { Star, X } from 'lucide-react'
+import { apiFetch } from '../../../api/apiClient'
 
 const schema = z.object({
   name: z.string().min(2, 'Required'),
@@ -24,6 +25,10 @@ const lbl = 'mb-1.5 block text-xs font-semibold uppercase tracking-wider text-ma
 const ProductForm = ({ categories, onSave, onCancel, initial }) => {
   
   const [images, setImages] = useState(initial?.images || [])
+  const [reviews, setReviews] = useState([])
+  useEffect(() => {
+    if (initial?._id) apiFetch(`/products/${initial._id}/reviews`).then((r) => setReviews(Array.isArray(r.data) ? r.data : r.data?.items ?? r.data?.reviews ?? [])).catch(() => {})
+  }, [initial?._id])
   const [imgUrl, setImgUrl] = useState('')
   const addUrl = () => {
     const url = imgUrl.trim()
@@ -96,6 +101,21 @@ const ProductForm = ({ categories, onSave, onCancel, initial }) => {
         </div>
       </div>
       {err && <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">{err}</p>}
+      {initial && (
+        <div>
+          <span className={lbl}>Customer reviews ({reviews.length})</span>
+          {reviews.length === 0 ? <p className="text-xs text-ink/45">No reviews yet.</p> : (
+            <ul className="mt-1 max-h-32 space-y-2 overflow-y-auto">
+              {reviews.map((r) => (
+                <li key={r._id} className="rounded-lg border border-gold/25 bg-cream px-3 py-2 text-xs">
+                  <span className="flex items-center gap-1 font-semibold text-maroon"><Star className="size-3 fill-gold text-gold" /> {r.rating}/5 <span className="font-normal text-ink/50">· {r.user?.name || 'Customer'}</span></span>
+                  <p className="mt-0.5 text-ink/65">{r.comment}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
       <div className="flex gap-3">
         <button type="submit" disabled={busy} className="rounded-lg bg-maroon px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-maroon-dark disabled:opacity-50">{busy ? 'Saving…' : initial ? 'Update product' : 'Create product'}</button>
         <button type="button" onClick={onCancel} className="rounded-lg border border-gold/50 px-6 py-2.5 text-sm font-semibold text-maroon">Cancel</button>

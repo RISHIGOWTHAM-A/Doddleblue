@@ -11,8 +11,8 @@ const SessionExpired = () => {
   }, [])
   if (!show) return null
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-maroon-dark/85 px-5 backdrop-blur-sm">
-      <div className="w-full max-w-sm rounded-3xl border border-gold/40 bg-warm-white p-10 text-center shadow-2xl">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/40 px-5 backdrop-blur-md">
+      <div className="w-full max-w-sm rounded-3xl bg-white p-10 text-center shadow-2xl">
         <img src={brandLogo} alt="" className="mx-auto size-14 rounded-xl border border-gold/50 object-cover" />
         <span className="mx-auto mt-5 flex size-12 items-center justify-center rounded-full bg-gold/20 text-maroon"><Lock className="size-5" /></span>
         <h1 className="mt-4 font-serif text-2xl font-semibold text-maroon">Session expired</h1>

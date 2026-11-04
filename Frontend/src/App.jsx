@@ -15,11 +15,13 @@ import ProductDetailsPage from './features/products/details-page'
 import CartPage from './features/cart/page'
 import OrdersPage from './features/orders/page'
 import ProfilePage from './features/profile/page'
+import NotificationsPage from './features/notifications/page'
 import AdminProductsPage from './features/admin/products-page'
 import AdminLayout from './features/admin/_components/AdminLayout'
 import AdminOrdersPage from './features/admin/orders-page'
 import AdminCategoriesPage from './features/admin/categories-page'
 import AdminCustomersPage from './features/admin/customers-page'
+import AdminMessagesPage from './features/admin/messages-page'
 
 const App = () => (
   <BrowserRouter>
@@ -36,12 +38,14 @@ const App = () => (
       <Route path="/cart" element={<CartPage />} />
       <Route path="/orders" element={<OrdersPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminPage />} />
         <Route path="products" element={<AdminProductsPage />} />
         <Route path="categories" element={<AdminCategoriesPage />} />
         <Route path="orders" element={<AdminOrdersPage />} />
         <Route path="customers" element={<AdminCustomersPage />} />
+        <Route path="messages" element={<AdminMessagesPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

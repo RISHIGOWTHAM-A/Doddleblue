@@ -57,7 +57,10 @@ const ProductsView = () => {
                 <span className="hidden">{retry}</span>
               </div>
             ) : items.length === 0 ? (
-              <p className="py-20 text-center text-sm text-ink/50">No sweets found — try clearing your filters.</p>
+              <div className="py-20 text-center">
+            <p className="font-serif text-xl text-maroon/70">That sweet isn't on the menu yet</p>
+            <p className="mt-2 text-sm text-ink/50">We're adding new recipes all the time — check back soon, or clear your filters to browse everything.</p>
+          </div>
             ) : (
               <ProductGrid products={items} />
             )}

@@ -9,16 +9,17 @@ const inp = 'w-full rounded-lg border border-gold/40 bg-warm-white px-4 py-2.5 t
 const AdminCategoriesPage = () => {
   const [cats, setCats] = useState(null)
   const [edit, setEdit] = useState(null)
-  const [f, setF] = useState({ name: '', description: '' })
+  const [f, setF] = useState({ name: '', description: '', image: '' })
   const [showForm, setShowForm] = useState(false)
   const [menu, setMenu] = useState(null)
   const [deleting, setDeleting] = useState(null)
-  const closeForm = () => { setShowForm(false); setEdit(null); setF({ name: '', description: '' }) }
+  const closeForm = () => { setShowForm(false); setEdit(null); setF({ name: '', description: '', image: '' }) }
   const load = () => getCategories().then(setCats).catch(() => setCats([]))
   useEffect(() => { load() }, [])
   const save = async (e) => {
     e.preventDefault()
-    try { edit ? await updateCategory(edit._id, f) : await createCategory(f); closeForm(); load() }
+    const body = { name: f.name, description: f.description, ...(f.image ? { image: { url: f.image, publicId: `cat/${f.name}` } } : {}) }
+    try { edit ? await updateCategory(edit._id, body) : await createCategory(body); closeForm(); load() }
     catch (e2) { toast(e2.message, 'error') }
   }
   if (!cats) return <p className="py-20 text-center text-sm text-ink/50">Loading…</p>
@@ -26,7 +27,7 @@ const AdminCategoriesPage = () => {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="font-serif text-2xl font-semibold text-maroon sm:text-3xl">Categories</h1>
-        <button onClick={() => { setEdit(null); setF({ name: '', description: '' }); setShowForm(true) }} className="flex items-center gap-2 rounded-lg bg-maroon px-5 py-2.5 text-sm font-semibold text-cream hover:bg-maroon-dark"><Plus className="size-4" /> Add category</button>
+        <button onClick={() => { setEdit(null); setF({ name: '', description: '', image: '' }); setShowForm(true) }} className="flex items-center gap-2 rounded-lg bg-maroon px-5 py-2.5 text-sm font-semibold text-cream hover:bg-maroon-dark"><Plus className="size-4" /> Add category</button>
       </div>
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md" onClick={closeForm}>
@@ -40,6 +41,9 @@ const AdminCategoriesPage = () => {
                 <input className={inp} placeholder="Category name" value={f.name} onChange={(e) => setF((x) => ({ ...x, name: e.target.value }))} required autoFocus /></label>
               <label className="block"><span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-maroon/70">Description</span>
                 <textarea className={inp} rows={3} placeholder="Short description" value={f.description} onChange={(e) => setF((x) => ({ ...x, description: e.target.value }))} /></label>
+              <label className="block"><span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-maroon/70">Image URL</span>
+                <input className={inp} placeholder="https://… category image" value={f.image} onChange={(e) => setF((x) => ({ ...x, image: e.target.value }))} /></label>
+              {f.image && <img src={f.image} alt="" className="h-20 w-full rounded-lg border border-gold/30 object-cover" />}
               <div className="flex gap-3 pt-1">
                 <button type="submit" className="flex items-center gap-2 rounded-lg bg-maroon px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-maroon-dark"><Plus className="size-4" />{edit ? 'Update' : 'Add category'}</button>
                 <button type="button" onClick={closeForm} className="rounded-lg border border-gold/50 px-5 py-2.5 text-sm font-semibold text-maroon transition hover:bg-gold/10">Cancel</button>
@@ -79,7 +83,7 @@ const AdminCategoriesPage = () => {
                     <button onClick={() => setMenu(menu === c._id ? null : c._id)} className="rounded-lg p-2 text-maroon hover:bg-maroon/10"><MoreVertical className="size-4" /></button>
                     {menu === c._id && (
                       <div className="absolute right-0 z-10 mt-1 w-32 overflow-hidden rounded-xl border border-gold/30 bg-warm-white shadow-lg">
-                        <button onClick={() => { setMenu(null); setEdit(c); setF({ name: c.name, description: c.description || '' }); setShowForm(true) }} className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-maroon hover:bg-gold/10"><Pencil className="size-3.5" /> Edit</button>
+                        <button onClick={() => { setMenu(null); setEdit(c); setF({ name: c.name, description: c.description || '', image: c.image?.url || '' }); setShowForm(true) }} className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-maroon hover:bg-gold/10"><Pencil className="size-3.5" /> Edit</button>
                         <button onClick={() => { setMenu(null); setDeleting(c) }} className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50"><Trash2 className="size-3.5" /> Delete</button>
                       </div>
                     )}

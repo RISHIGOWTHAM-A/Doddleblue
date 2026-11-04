@@ -40,7 +40,7 @@ const HomeView = () => {
       {/* Hero */}
       <section className="relative overflow-hidden bg-maroon">
         <img src={HERO} alt="" className="absolute inset-0 size-full object-cover object-center" />
-        <div className="absolute inset-0 bg-linear-to-r from-maroon-dark/70 via-maroon/25 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-maroon-dark/55 via-maroon/15 to-transparent" />
         <div className="relative mx-auto flex min-h-[calc(100svh-76px)] max-w-7xl flex-col justify-center px-5 py-24 sm:px-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-gold">Handcrafted since 1985</p>
           <h1 className="mt-4 max-w-2xl font-serif text-4xl font-semibold leading-tight text-cream sm:text-6xl">

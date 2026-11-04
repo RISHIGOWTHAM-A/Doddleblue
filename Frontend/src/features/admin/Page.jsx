@@ -1,4 +1,9 @@
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAdminStats } from './_hooks/useAdminStats'
+import { apiFetch } from '../../api/apiClient'
+
+const inr = (n) => `₹${Number(n).toLocaleString('en-IN')}`
 
 const StatCard = ({ label, value, sub }) => (
   <div className="rounded-2xl border border-gold/30 bg-white/60 p-6 transition hover:border-gold/60 hover:shadow-lg hover:shadow-maroon/10">
@@ -12,6 +17,13 @@ const StatCard = ({ label, value, sub }) => (
 
 const AdminPage = () => {
   const { user, stats, error } = useAdminStats()
+  const [orders, setOrders] = useState([])
+  const [msgs, setMsgs] = useState([])
+
+  useEffect(() => {
+    apiFetch('/admin/orders?limit=5').then((r) => setOrders(r.data?.items ?? r.data ?? [])).catch(() => {})
+    apiFetch('/contact').then((r) => setMsgs((r.data || []).slice(0, 5))).catch(() => {})
+  }, [])
 
   return (
     <div>
@@ -84,6 +96,42 @@ const AdminPage = () => {
                   ))}
                 </ul>
               )}
+            </div>
+
+            {/* Recent orders + messages */}
+            <div className="mt-10 grid gap-6 lg:grid-cols-2">
+              <div className="rounded-2xl border border-gold/30 bg-white/60 p-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-serif text-xl text-maroon">Recent orders</h2>
+                  <Link to="/admin/orders" className="text-xs font-semibold text-maroon hover:underline">View all →</Link>
+                </div>
+                {orders.length === 0 ? <p className="mt-4 text-sm text-ink/55">No orders yet.</p> : (
+                  <ul className="mt-4 divide-y divide-gold/20">
+                    {orders.slice(0, 5).map((o) => (
+                      <li key={o._id} className="flex items-center justify-between py-3 text-sm">
+                        <span><b className="text-maroon">#{o._id.slice(-6).toUpperCase()}</b><span className="ml-2 text-ink/55">{o.customer?.name || o.shippingAddress?.fullName || '—'}</span></span>
+                        <span className="flex items-center gap-2"><b className="text-maroon">{inr(o.totalAmount)}</b><span className="rounded-full bg-gold/20 px-2 py-0.5 text-[10px] font-bold uppercase text-maroon">{o.orderStatus}</span></span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div className="rounded-2xl border border-gold/30 bg-white/60 p-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-serif text-xl text-maroon">Latest messages</h2>
+                  <Link to="/admin/messages" className="text-xs font-semibold text-maroon hover:underline">View all →</Link>
+                </div>
+                {msgs.length === 0 ? <p className="mt-4 text-sm text-ink/55">No messages yet.</p> : (
+                  <ul className="mt-4 divide-y divide-gold/20">
+                    {msgs.map((m) => (
+                      <li key={m._id} className="py-3 text-sm">
+                        <p className="flex items-center gap-2"><b className="text-maroon">{m.name}</b>{!m.isRead && <span className="rounded bg-gold/25 px-1.5 py-0.5 text-[10px] font-bold text-maroon">NEW</span>}</p>
+                        <p className="mt-0.5 line-clamp-1 text-ink/55">{m.message}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           </>
         )}

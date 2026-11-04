@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Menu, Package, Search, ShoppingBag, User, X } from 'lucide-react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Bell, Menu, Package, Search, ShoppingBag, User, X } from 'lucide-react'
 import brandLogo from '../../../assets/brand-logo.png'
-import { getCart } from '../../../api/cart.api'
-import { getToken } from '../../../api/apiClient'
+import { useDispatch, useSelector } from 'react-redux'
+import { apiFetch, getToken } from '../../../api/apiClient'
+import { fetchCart, selectCartCount } from '../../../store/cartSlice'
 
 const NAV_LINKS = [
   { to: '/home', label: 'Home' },
@@ -16,29 +17,27 @@ const NAV_LINKS = [
 const Header = () => {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
-  const [cartCount, setCartCount] = useState(0)
+  const cartCount = useSelector(selectCartCount)
+  const dispatch = useDispatch()
+  const [replies, setReplies] = useState([])
   const { pathname } = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const load = () => {
-      if (!getToken()) return setCartCount(0)
-      getCart().then((c) => setCartCount((c?.items || []).reduce((n, i) => n + i.quantity, 0))).catch(() => {})
-    }
-    load()
-    const onUpdate = (e) => {
-      if (e.detail?.delta) setCartCount((c) => Math.max(0, c + e.detail.delta))
-      else load()
-    }
-    window.addEventListener('cart-updated', onUpdate)
-    return () => window.removeEventListener('cart-updated', onUpdate)
-  }, [pathname])
+    if (getToken()) dispatch(fetchCart())
+    apiFetch('/contact/my').then((r) => setReplies(r.data || [])).catch(() => {})
+  }, [pathname, dispatch])
 
   const navCls = ({ isActive }) =>
     `rounded-lg px-3.5 py-2 text-sm font-medium tracking-wide transition ${
       isActive ? 'bg-gold/15 text-maroon' : 'text-ink/70 hover:bg-gold/10 hover:text-maroon'
     }`
 
-  const submitSearch = (e) => e.preventDefault()
+  const submitSearch = (e) => {
+    e.preventDefault()
+    const q = search.trim()
+    if (q) { navigate(`/products?search=${encodeURIComponent(q)}`); setSearch(''); setOpen(false) }
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-gold/30 bg-cream/95 shadow-sm shadow-maroon/5 backdrop-blur">
@@ -73,6 +72,10 @@ const Header = () => {
           <Link to="/profile" aria-label="Account" className="rounded-lg p-2.5 text-maroon transition hover:bg-gold/15">
             <User className="size-5" />
           </Link>
+          <button onClick={() => navigate('/notifications')} aria-label="Notifications" className="relative rounded-lg p-2.5 text-maroon transition hover:bg-gold/15">
+            <Bell className="size-5" />
+            {replies.length > 0 && <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-full bg-maroon text-[9px] font-bold text-cream">{replies.length}</span>}
+          </button>
           <Link to="/orders" aria-label="My orders" className="rounded-lg p-2.5 text-maroon transition hover:bg-gold/15">
             <Package className="size-5" />
           </Link>

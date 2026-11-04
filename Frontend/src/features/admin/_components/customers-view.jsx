@@ -17,7 +17,7 @@ const AdminCustomersPage = () => {
           <thead><tr className="border-b border-gold/25 text-left text-xs uppercase tracking-wider text-ink/50">
             <th className="p-4">Name</th><th className="p-4">Email</th><th className="p-4">Role</th><th className="p-4" /></tr></thead>
           <tbody>
-            {users.map((u) => (
+            {users.filter((u) => u.role === 'customer').map((u) => (
               <tr key={u._id} className="border-b border-gold/15 last:border-0">
                 <td className="flex items-center gap-3 p-4">
                   {u.profileImage ? <img src={u.profileImage} alt="" className="size-9 rounded-lg object-cover" />

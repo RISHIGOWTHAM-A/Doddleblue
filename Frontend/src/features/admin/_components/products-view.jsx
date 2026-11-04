@@ -53,7 +53,7 @@ const AdminProductsPage = () => {
         {notice && <p className="mt-4 rounded-lg bg-green-50 px-4 py-2.5 text-sm font-medium text-green-800">{notice}</p>}
         {err && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-xs text-red-700">{err}</p>}
         {showForm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-maroon-dark/60 p-4 backdrop-blur-sm" onClick={() => { setShowForm(false); setEditing(null) }}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md" onClick={() => { setShowForm(false); setEditing(null) }}>
             <div className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-cream p-2 shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <button onClick={() => { setShowForm(false); setEditing(null) }} className="absolute right-5 top-5 z-10 rounded-lg p-1.5 text-ink/40 transition hover:bg-maroon/10 hover:text-maroon"><X className="size-5" /></button>
               <ProductForm categories={cats} initial={editing} onSave={save} onCancel={() => { setShowForm(false); setEditing(null) }} />
@@ -84,7 +84,7 @@ const AdminProductsPage = () => {
                     {p.images?.[0]?.url && <img src={p.images[0].url} alt="" className="size-10 rounded-lg object-cover" />}
                     <b className="text-maroon">{p.name}</b>{p.isFeatured && <span className="rounded bg-gold/25 px-1.5 py-0.5 text-[10px] font-bold text-maroon">★</span>}</td>
                   <td className="p-4 text-ink/60">{p.category?.name || '—'}</td>
-                  <td className="p-4">{inr(p.discountPrice ?? p.price)}{p.discountPrice && <span className="ml-1 text-xs text-ink/40 line-through">{inr(p.price)}</span>}</td>
+                  <td className="p-4">{(() => { const pr = p.discountPrice ?? p.price ?? p.weightOptions?.[0]?.price; return pr ? inr(pr) : '—' })()}</td>
                   <td className={`p-4 font-semibold ${p.stock === 0 ? 'text-red-600' : 'text-maroon'}`}>{p.stock}</td>
                   <td className="p-4"><span className={`rounded-lg px-2 py-1 text-[11px] font-semibold ${p.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-700'}`}>{p.isActive ? 'Active' : 'Hidden'}</span></td>
                   <td className="p-4 text-right">

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, LogOut, Package, PanelLeft, ShoppingBag, Tag, Users } from 'lucide-react'
+import { LayoutDashboard, LogOut, Mail, Package, PanelLeft, ShoppingBag, Tag, Users } from 'lucide-react'
 import { apiFetch, clearSession, getStoredUser } from '../../../api/apiClient'
 import brandLogo from '../../../assets/brand-logo.png'
 
@@ -10,6 +10,7 @@ const LINKS = [
   { to: '/admin/categories', label: 'Categories', icon: Tag },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { to: '/admin/customers', label: 'Customers', icon: Users },
+  { to: '/admin/messages', label: 'Messages', icon: Mail },
 ]
 
 const AdminSidebar = () => {

@@ -16,6 +16,7 @@ const ProfileView = () => {
   const [form, setForm] = useState({ name: '', phone: '', profileImage: '' })
   const [pw, setPw] = useState({ currentPassword: '', newPassword: '' })
   const [busy, setBusy] = useState('')
+  const [editing, setEditing] = useState(false)
 
   useEffect(() => {
     apiFetch('/auth/me').then(({ data }) => {
@@ -33,7 +34,7 @@ const ProfileView = () => {
       const { data } = await apiFetch('/auth/me', { method: 'PUT', body: form })
       const u = data?.user ?? data
       setMe(u); localStorage.setItem('rs_user', JSON.stringify(u))
-      toast('Profile updated ✓')
+      setEditing(false); toast('Profile updated ✓')
     } catch (e2) { toast(e2.message, 'error') }
     setBusy('')
   }
@@ -70,15 +71,23 @@ const ProfileView = () => {
         </div>
 
         <form onSubmit={saveProfile} className="mt-8 rounded-2xl border border-gold/30 bg-warm-white p-6">
-          <h2 className="font-serif text-xl font-semibold text-maroon">Profile details</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <label className="block"><span className={lbl}>Name</span><input className={inp} value={form.name} onChange={set('name')} required /></label>
-            <label className="block"><span className={lbl}>Phone</span><input className={inp} value={form.phone} onChange={set('phone')} placeholder="+91…" /></label>
+          <div className="flex items-center justify-between">
+            <h2 className="font-serif text-xl font-semibold text-maroon">Profile details</h2>
+            {!editing && <button type="button" onClick={() => setEditing(true)} className="rounded-lg border border-maroon/40 px-4 py-1.5 text-xs font-semibold text-maroon transition hover:bg-maroon hover:text-cream">Edit</button>}
           </div>
-          <label className="mt-4 block"><span className={lbl}>Profile image URL</span><input className={inp} value={form.profileImage} onChange={set('profileImage')} placeholder="https://…" /></label>
-          <button disabled={busy === 'p'} className="mt-5 flex items-center gap-2 rounded-lg bg-maroon px-6 py-2.5 text-sm font-semibold text-cream hover:bg-maroon-dark disabled:opacity-50">
-            <Check className="size-4" /> {busy === 'p' ? 'Saving…' : 'Save changes'}
-          </button>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <label className="block"><span className={lbl}>Name</span><input className={`${inp} ${!editing ? 'opacity-60' : ''}`} value={form.name} onChange={set('name')} required readOnly={!editing} /></label>
+            <label className="block"><span className={lbl}>Phone</span><input className={`${inp} ${!editing ? 'opacity-60' : ''}`} value={form.phone} onChange={set('phone')} placeholder="+91…" readOnly={!editing} /></label>
+          </div>
+          <label className="mt-4 block"><span className={lbl}>Profile image URL</span><input className={`${inp} ${!editing ? 'opacity-60' : ''}`} value={form.profileImage} onChange={set('profileImage')} placeholder="https://…" readOnly={!editing} /></label>
+          {editing && (
+            <div className="mt-5 flex gap-3">
+              <button disabled={busy === 'p'} className="flex items-center gap-2 rounded-lg bg-maroon px-6 py-2.5 text-sm font-semibold text-cream hover:bg-maroon-dark disabled:opacity-50">
+                <Check className="size-4" /> {busy === 'p' ? 'Saving…' : 'Save changes'}
+              </button>
+              <button type="button" onClick={() => { setEditing(false); setForm({ name: me.name || '', phone: me.phone || '', profileImage: me.profileImage || '' }) }} className="rounded-lg border border-gold/50 px-5 py-2.5 text-sm font-semibold text-maroon">Cancel</button>
+            </div>
+          )}
         </form>
 
         <form onSubmit={savePw} className="mt-6 rounded-2xl border border-gold/30 bg-warm-white p-6">

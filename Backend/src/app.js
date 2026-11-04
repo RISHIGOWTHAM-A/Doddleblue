@@ -31,6 +31,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/uploads', uploadRoutes);
+app.use('/api/contact', require('./routes/contact.routes'));
 
 app.get('/', (req, res) => res.send(`<!doctype html><html><head><title>Royal Sweets API</title>
 <style>body{margin:0;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F7F0E2;color:#701F2C}
