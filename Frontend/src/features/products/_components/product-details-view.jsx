@@ -51,13 +51,24 @@ const ProductDetailsView = () => {
           <Link to="/home" className="text-maroon hover:underline">Home</Link> / <Link to="/products" className="text-maroon hover:underline">{p.category?.name || 'Sweets'}</Link> / <span className="text-ink/70">{p.name}</span>
         </p>
         <div className="mt-5 grid gap-10 lg:grid-cols-2">
-          <ProductGallery images={p.images} name={p.name} />
+          <ProductGallery images={p.images} name={p.name} pct={p.discountPrice ? Math.round((1 - p.discountPrice / p.price) * 100) : 0} />
           <div>
             <ProductInformation p={p} weight={w} onWeight={setWeight} qty={qty} onQty={setQty} />
-            <button onClick={add} disabled={busy || !stock}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-maroon py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-cream transition hover:bg-maroon-dark disabled:opacity-50">
-              <ShoppingBag className="size-4" /> {busy ? 'Adding…' : 'Add to bag'}
-            </button>
+            <div className="mt-5 flex gap-3">
+              <button onClick={add} disabled={busy || !stock}
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-maroon py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-cream transition hover:bg-maroon-dark disabled:opacity-50">
+                <ShoppingBag className="size-4" /> {busy ? 'Adding…' : 'Add to bag'}
+              </button>
+              <button onClick={async () => { await add(); navigate('/cart') }} disabled={busy || !stock}
+                className="flex-1 rounded-lg border border-maroon/40 py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-maroon transition hover:bg-maroon hover:text-cream disabled:opacity-50">
+                Buy now
+              </button>
+            </div>
+            <div className="mt-5 grid grid-cols-3 gap-3 text-center text-xs">
+              {['Free shipping over ₹999', 'COD available', 'Made fresh daily'].map((t) => (
+                <div key={t} className="rounded-lg border border-gold/30 bg-warm-white px-2 py-3 text-ink/65">{t}</div>
+              ))}
+            </div>
           </div>
         </div>
         <ProductReviews productId={p._id} reviews={allReviews} onAdded={reloadReviews} />

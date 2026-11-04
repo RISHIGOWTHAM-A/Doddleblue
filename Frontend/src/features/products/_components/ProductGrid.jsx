@@ -13,9 +13,9 @@ export const ProductSkeletons = ({ count = 8 }) => (
   </div>
 )
 
-const ProductGrid = ({ products }) => (
+const ProductGrid = ({ products, variant }) => (
   <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-    {products.map((p) => <ProductCard key={p._id} p={p} />)}
+    {products.map((p) => <ProductCard key={p._id} p={p} variant={variant} />)}
   </div>
 )
 export default ProductGrid

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 
-const ProductGallery = ({ images = [], name }) => {
+const ProductGallery = ({ images = [], name, pct = 0 }) => {
   const [idx, setIdx] = useState(0)
   return (
     <div>
-      <div className="overflow-hidden rounded-3xl border border-gold/40 bg-cream-dark">
+      <div className="relative overflow-hidden rounded-3xl border border-gold/40 bg-cream-dark">
+        {pct > 0 && <span className="absolute left-4 top-4 rounded-lg bg-[#c2410c] px-2.5 py-1 text-xs font-bold text-white">-{pct}%</span>}
         {images[idx] ? (
           <img src={images[idx].url} alt={name} className="aspect-square w-full object-cover" />
         ) : (

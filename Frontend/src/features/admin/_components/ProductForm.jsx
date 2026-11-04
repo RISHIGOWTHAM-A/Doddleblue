@@ -22,12 +22,21 @@ const schema = z.object({
 const inp = 'w-full rounded-lg border border-gold/40 bg-warm-white px-4 py-2.5 text-sm outline-none focus:border-maroon focus:ring-2 focus:ring-maroon/15'
 const lbl = 'mb-1.5 block text-xs font-semibold uppercase tracking-wider text-maroon/70'
 
-const ProductForm = ({ categories, onSave, onCancel }) => {
+const ProductForm = ({ categories, onSave, onCancel, initial }) => {
   const fileRef = useRef()
-  const [images, setImages] = useState([])
+  const [images, setImages] = useState(initial?.images || [])
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
-  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(schema), defaultValues: { isActive: true, isFeatured: false, stock: 0 } })
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: initial ? {
+      ...initial,
+      category: initial.category?._id || initial.category,
+      weightOptions: (initial.weightOptions || []).map((w) => `${w.label}:${w.price}${w.stock != null ? `:${w.stock}` : ''}`).join(', '),
+      ingredients: (initial.ingredients || []).join(', '),
+      allergens: (initial.allergens || []).join(', '),
+    } : { isActive: true, isFeatured: false, stock: 0 },
+  })
 
   const pick = async (e) => {
     for (const f of e.target.files) {
@@ -94,7 +103,7 @@ const ProductForm = ({ categories, onSave, onCancel }) => {
       </div>
       {err && <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">{err}</p>}
       <div className="flex gap-3">
-        <button type="submit" disabled={busy} className="rounded-lg bg-maroon px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-maroon-dark disabled:opacity-50">{busy ? 'Saving…' : 'Create product'}</button>
+        <button type="submit" disabled={busy} className="rounded-lg bg-maroon px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-maroon-dark disabled:opacity-50">{busy ? 'Saving…' : initial ? 'Update product' : 'Create product'}</button>
         <button type="button" onClick={onCancel} className="rounded-lg border border-gold/50 px-6 py-2.5 text-sm font-semibold text-maroon">Cancel</button>
       </div>
     </form>

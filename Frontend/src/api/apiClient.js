@@ -30,7 +30,16 @@ export const apiFetch = async (path, { method = 'GET', body, auth = true } = {})
     headers,
     body: body ? JSON.stringify(body) : undefined,
   })
+  if (res.status === 401 && auth) {
+    clearSession()
+    if (!location.pathname.startsWith('/login')) {
+      window.dispatchEvent(new CustomEvent('session-expired', { detail: { from: location.pathname } }))
+      setTimeout(() => location.assign(`/login?expired=1&from=${encodeURIComponent(location.pathname)}`), 2500)
+    }
+    throw new Error('Session expired — please sign in again')
+  }
   const json = await res.json().catch(() => ({}))
+  console.log(`[API] ${method} ${path} → ${res.status}`)
 
   if (!res.ok) {
     throw new Error(json.message || `Request failed (${res.status})`)

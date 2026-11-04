@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import AuthShell from '../../components/AuthShell'
 import LoginForm from './_components/LoginForm'
 import { useLogin } from './_hooks/useLogin'
@@ -8,6 +8,8 @@ const PANEL_IMAGE =
 
 const LoginPage = () => {
   const login = useLogin()
+  const [params] = useSearchParams()
+  const expired = params.get('expired') === '1'
 
   return (
     <AuthShell
@@ -23,6 +25,11 @@ const LoginPage = () => {
         </>
       }
     >
+      {expired && (
+        <p className="mb-4 rounded-lg border border-gold/50 bg-gold/10 px-4 py-2.5 text-sm font-medium text-maroon">
+          Your session has expired — please sign in again.
+        </p>
+      )}
       <LoginForm {...login} />
     </AuthShell>
   )

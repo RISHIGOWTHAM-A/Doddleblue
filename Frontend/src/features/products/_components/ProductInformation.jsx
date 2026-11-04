@@ -1,4 +1,6 @@
 import { Star } from 'lucide-react'
+
+const inr = (n) => `₹${Number(n).toLocaleString('en-IN')}`
 import ProductPrice from './ProductPrice'
 import WeightSelector from './WeightSelector'
 import ProductQuantity from './ProductQuantity'
@@ -19,6 +21,7 @@ const ProductInformation = ({ p, weight, onWeight, qty, onQty }) => {
       <p className="mt-4 text-sm leading-7 text-ink/70">{p.description}</p>
       <WeightSelector options={p.weightOptions} value={weight} onChange={onWeight} />
       <ProductQuantity qty={qty} setQty={onQty} stock={stock} />
+      {qty > 1 && <p className="mt-2 text-sm font-semibold text-maroon">Total for {qty}: {inr((weight?.price ?? p.discountPrice ?? p.price) * qty)}</p>}
       {(p.ingredients?.length > 0 || p.allergens?.length > 0) && (
         <div className="mt-6 space-y-2 rounded-2xl border border-gold/30 bg-warm-white p-5 text-sm text-ink/70">
           {p.ingredients?.length > 0 && <p><b className="text-maroon">Ingredients:</b> {p.ingredients.join(', ')}</p>}

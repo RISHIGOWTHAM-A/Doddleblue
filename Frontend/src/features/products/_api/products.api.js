@@ -18,6 +18,5 @@ export const getCategories = async () => {
   return res.data?.categories ?? res.data?.items ?? res.data ?? []
 }
 export const submitReview = (productId, body) =>
-  apiFetch(`/products/${productId}/reviews`, { method: 'POST', body: JSON.stringify(body) })
-export const addToCart = (body) =>
-  apiFetch('/cart/items', { method: 'POST', body: JSON.stringify(body) })
+  apiFetch(`/products/${productId}/reviews`, { method: 'POST', body })
+export { addToCart } from '../../../api/cart.api'

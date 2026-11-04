@@ -1,10 +1,10 @@
 import { apiFetch } from '../../../api/apiClient'
 
 export const adminCreateProduct = (body) =>
-  apiFetch('/products', { method: 'POST', body: JSON.stringify(body) })
+  apiFetch('/products', { method: 'POST', body })
 
 export const adminUpdateProduct = (id, body) =>
-  apiFetch(`/products/${id}`, { method: 'PUT', body: JSON.stringify(body) })
+  apiFetch(`/products/${id}`, { method: 'PUT', body })
 
 export const adminDeleteProduct = (id) => apiFetch(`/products/${id}`, { method: 'DELETE' })
 

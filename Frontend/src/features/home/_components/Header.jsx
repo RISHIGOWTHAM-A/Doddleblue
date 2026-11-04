@@ -1,7 +1,9 @@
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { Menu, Search, ShoppingBag, User, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Menu, Package, Search, ShoppingBag, User, X } from 'lucide-react'
 import brandLogo from '../../../assets/brand-logo.png'
+import { getCart } from '../../../api/cart.api'
+import { getToken } from '../../../api/apiClient'
 
 const NAV_LINKS = [
   { to: '/home', label: 'Home' },
@@ -14,6 +16,22 @@ const NAV_LINKS = [
 const Header = () => {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
+  const [cartCount, setCartCount] = useState(0)
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    const load = () => {
+      if (!getToken()) return setCartCount(0)
+      getCart().then((c) => setCartCount((c?.items || []).reduce((n, i) => n + i.quantity, 0))).catch(() => {})
+    }
+    load()
+    const onUpdate = (e) => {
+      if (e.detail?.delta) setCartCount((c) => Math.max(0, c + e.detail.delta))
+      else load()
+    }
+    window.addEventListener('cart-updated', onUpdate)
+    return () => window.removeEventListener('cart-updated', onUpdate)
+  }, [pathname])
 
   const navCls = ({ isActive }) =>
     `rounded-lg px-3.5 py-2 text-sm font-medium tracking-wide transition ${
@@ -55,8 +73,12 @@ const Header = () => {
           <Link to="/profile" aria-label="Account" className="rounded-lg p-2.5 text-maroon transition hover:bg-gold/15">
             <User className="size-5" />
           </Link>
-          <Link to="/cart" aria-label="Cart" className="rounded-lg p-2.5 text-maroon transition hover:bg-gold/15">
+          <Link to="/orders" aria-label="My orders" className="rounded-lg p-2.5 text-maroon transition hover:bg-gold/15">
+            <Package className="size-5" />
+          </Link>
+          <Link to="/cart" aria-label="Cart" className="relative rounded-lg p-2.5 text-maroon transition hover:bg-gold/15">
             <ShoppingBag className="size-5" />
+            {cartCount > 0 && <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-full bg-gold text-[9px] font-bold text-maroon-dark">{cartCount}</span>}
           </Link>
           <button onClick={() => setOpen((o) => !o)} aria-label="Menu" className="rounded-lg p-2.5 text-maroon transition hover:bg-gold/15 lg:hidden">
             {open ? <X className="size-5" /> : <Menu className="size-5" />}

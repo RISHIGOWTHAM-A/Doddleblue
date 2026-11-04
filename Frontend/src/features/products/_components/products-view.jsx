@@ -23,7 +23,9 @@ const ProductsView = () => {
     <div className="min-h-svh bg-cream">
       <Header />
       <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
-        <h1 className="font-serif text-3xl font-semibold text-maroon">All sweets</h1>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">Royal Sweets · Shop</p>
+        <h1 className="mt-1 font-serif text-3xl font-semibold text-maroon">Discover Our Sweets</h1>
+        <p className="mt-1 text-sm text-ink/55">Every sweet handmade this morning.{pagination ? ` ${pagination.total} available.` : ''}</p>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <ProductSearch value={search} onChange={setSearch} />
           <ProductSort value={params.get('sort') || 'newest'} onChange={(v) => set('sort', v)} />
