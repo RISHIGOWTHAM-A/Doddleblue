@@ -14,7 +14,9 @@ export const clearCart = createAsyncThunk('cart/clear', async () => (await apiFe
 const cartSlice = createSlice({
   name: 'cart',
   initialState: { items: [], subtotal: 0, total: 0, status: 'idle' },
-  reducers: {},
+  reducers: {
+    bumpCount: (s, a) => { s.items.push({ quantity: a.payload || 1, optimistic: true }) },
+  },
   extraReducers: (b) => {
     b.addCase(fetchCart.pending, (s) => { s.status = 'loading' })
     b.addMatcher(
@@ -24,5 +26,6 @@ const cartSlice = createSlice({
   },
 })
 
+export const { bumpCount } = cartSlice.actions
 export const selectCartCount = (s) => s.cart.items.reduce((n, i) => n + (i.unavailable ? 0 : i.quantity), 0)
 export default cartSlice.reducer
